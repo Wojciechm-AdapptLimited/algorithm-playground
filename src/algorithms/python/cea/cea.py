@@ -4,7 +4,7 @@ import numpy as np
 logging.basicConfig(format='%(process)d-%(levelname)s-%(message)s', level=logging.INFO)
 
 
-class CEA:
+class CEAClassifier:
     """
     Implementation of the Candidate Elimination Algorithm.
 
