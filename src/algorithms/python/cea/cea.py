@@ -37,7 +37,7 @@ class CEA:
 
         :param concepts: NumPy array of training examples.
         :param targets: NumPy array of training labels.
-        :return: two lists of NumPy arrays representing strict and general hypothesis sets.
+        :return: Tuple containing the strict and general hypothesis sets.
         :raises ValueError: if the number of concepts and targets is different.
         """
         if len(concepts) != len(targets):
@@ -76,14 +76,15 @@ class CEA:
         return strict_hypothesis_set, general_hypothesis_set
 
     @staticmethod
-    def _remove_inconsistent(hypothesis_set: list[np.ndarray], example: np.ndarray, positive: bool) -> list[np.ndarray]:
+    def _remove_inconsistent(hypothesis_set: list[np.ndarray], example: np.ndarray, positive: bool) \
+            -> list[np.ndarray]:
         """
         Remove inconsistent hypotheses from the hypothesis set.
 
-        :param hypothesis_set: List of NumPy arrays representing hypotheses.
+        :param hypothesis_set: List of NumPy arrays representing the hypothesis set.
         :param example: NumPy array representing a training example.
         :param positive: Boolean representing whether the example is positive or negative.
-        :return: List of NumPy arrays representing hypotheses.
+        :return: List of NumPy arrays representing consistent hypotheses.
         """
         # Initialize the consistent hypothesis set.
         consistent_hypothesis_set: list[np.ndarray] = []
@@ -118,7 +119,7 @@ class CEA:
 
         :param hypothesis_set: List of NumPy arrays representing hypotheses.
         :param example: NumPy array representing a training example.
-        :return: List of NumPy arrays representing hypotheses.
+        :return: List of NumPy arrays representing generalized hypotheses.
         """
         # Initialize the generalized hypothesis set.
         generalized_hypothesis_set: list[np.ndarray] = []
@@ -145,10 +146,11 @@ class CEA:
                     example: np.ndarray) -> list[np.ndarray]:
         """
         Specialize the general hypothesis set.
+
         :param strict_hypothesis_set: List of NumPy arrays representing strict hypotheses.
         :param general_hypothesis_set: List of NumPy arrays representing general hypotheses.
         :param example: NumPy array representing a training example.
-        :return:
+        :return: List of NumPy arrays representing specialized hypotheses.
         """
         # Initialize the specialized hypothesis set.
         specialized_hypothesis_set: list[np.ndarray] = []
@@ -159,18 +161,19 @@ class CEA:
         for hypothesis in general_hypothesis_set:
             # Iterate over the attributes of the hypothesis.
             logging.info(f'Hypothesis: {hypothesis}')
-            for idx, (strict_hypothesis_attribute, example_attribute) \
-                    in enumerate(zip(strict_hypothesis_set[0], example)):
-                # If the attribute of the strict hypothesis is '?' or to the corresponding example attribute, skip it.
-                if strict_hypothesis_attribute == example_attribute or strict_hypothesis_attribute == '?':
-                    continue
-                # Copy the hypothesis and set the attribute to the corresponding strict hypothesis attribute.
-                specialized_hypothesis = np.array(hypothesis)
-                specialized_hypothesis[idx] = strict_hypothesis_attribute
+            for strict_hypothesis in strict_hypothesis_set:
+                for idx, (strict_hypothesis_attribute, example_attribute) in enumerate(zip(strict_hypothesis, example)):
+                    # If the attribute of the strict hypothesis is '?' or to the corresponding example
+                    # attribute, skip it.
+                    if strict_hypothesis_attribute == example_attribute or strict_hypothesis_attribute == '?':
+                        continue
+                    # Copy the hypothesis and set the attribute to the corresponding strict hypothesis attribute.
+                    specialized_hypothesis = np.array(hypothesis)
+                    specialized_hypothesis[idx] = strict_hypothesis_attribute
 
-                # Add the specialized hypothesis to the specialized hypothesis set.
-                logging.info(f'Specialized hypothesis: {specialized_hypothesis}')
-                specialized_hypothesis_set.append(specialized_hypothesis)
+                    # Add the specialized hypothesis to the specialized hypothesis set.
+                    logging.info(f'Specialized hypothesis: {specialized_hypothesis}')
+                    specialized_hypothesis_set.append(specialized_hypothesis)
 
         logging.info(f'Specialized hypothesis set: {specialized_hypothesis_set}')
         return specialized_hypothesis_set
