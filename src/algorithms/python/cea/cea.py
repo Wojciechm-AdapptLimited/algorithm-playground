@@ -200,8 +200,5 @@ def test_cea() -> None:
     # targets = np.array(['yes', 'no', 'yes', 'no'])
 
     # Run the CEA algorithm.
-    cea = CEA()
+    cea = CEAClassifier()
     _ = cea.fit(concepts, targets)
-
-
-test_cea()
