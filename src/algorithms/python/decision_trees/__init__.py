@@ -1,1 +1,1 @@
-from .utils import Node, calculate_entropy, calculate_information_gain
+from .utils import Node, calculate_information_gain_ratio

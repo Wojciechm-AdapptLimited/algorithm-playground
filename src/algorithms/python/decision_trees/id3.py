@@ -1,5 +1,5 @@
 import numpy as np
-from utils import Node, calculate_information_gain
+from utils import Node, calculate_information_gain_ratio
 
 
 class ID3Classifier:
@@ -41,13 +41,13 @@ class ID3Classifier:
         :return: Node of the decision tree
         """
         if depth == self.max_depth:
-            return Node(target[0])
+            return Node(np.unique(target)[np.argmax(np.unique(target, return_counts=True)[1])])
 
         if np.unique(target).size == 1:
             return Node(target[0])
 
         information_gains = np.array([
-            calculate_information_gain(features[:, i], target)
+            calculate_information_gain_ratio(features[:, i], target)
             for i in range(features.shape[1])
         ])
 
@@ -88,6 +88,7 @@ def test_id3():
 
     id3 = ID3Classifier(max_depth=5)
     tree = id3.fit(attributes, data[:, :-1], data[:, -1])
+    print(tree)
 
 
 test_id3()

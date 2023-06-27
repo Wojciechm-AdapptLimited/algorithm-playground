@@ -67,10 +67,12 @@ def calculate_information_gain_ratio(features: np.ndarray, target: np.ndarray) -
     unique_features: np.ndarray
     unique_features, counts = np.unique(features, return_counts=True)
 
-    intrinsic_value: np.ndarray = np.sum([
-        -count / features.size
-        * np.log2(count / features.size, out=np.zeros_like(counts, dtype=float), where=counts != 0)
+    intrinsic_value: np.ndarray = -np.sum([
+        count / features.size
+        * np.log2(count / features.size)
+        if count != 0
+        else 0
         for count in counts
     ])
 
-    return calculate_information_gain(features, target) / intrinsic_value
+    return calculate_information_gain(features, target) / intrinsic_value if intrinsic_value > 0 else 0
