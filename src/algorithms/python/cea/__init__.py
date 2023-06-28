@@ -1,1 +1,1 @@
-from .cea import cea
+from .cea import CEAClassifier
